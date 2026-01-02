@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentiment Analysis | ML App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 28px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        p.subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #bbb;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            background: #111;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            border-color: #00c6ff;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 114, 255, 0.4);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #0d0d0d;
+            border-radius: 12px;
+            border: 1px solid #222;
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .result h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        .confidence {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        footer span {
+            color: #00c6ff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>Sentiment Analysis</h1>
+        <p class="subtitle">
+            AI-powered text sentiment classifier using NLP & Machine Learning
+        </p>
+
+        <textarea id="textInput" placeholder="Type or paste your text here...&#10;Example: I really loved this product!"></textarea>
+
+        <button onclick="predictSentiment()">Analyze Sentiment</button>
+
+        <div class="result" id="resultBox">
+            <h2 id="sentimentText"></h2>
+            <div class="confidence" id="confidenceText"></div>
+        </div>
+    </div>
+
+    <footer>
+        Built by <span>Jeevan Parmar</span> • First NLP Project of 2026 🚀
+    </footer>
+</div>
+
+<script>
+    function predictSentiment() {
+        const text = document.getElementById("textInput").value;
+        const resultBox = document.getElementById("resultBox");
+        const sentimentText = document.getElementById("sentimentText");
+        const confidenceText = document.getElementById("confidenceText");
+
+        if (text.trim() === "") {
+            alert("Please enter some text.");
+            return;
+        }
+
+        fetch("/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ text: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            sentimentText.innerText = "Sentiment: " + data.sentiment;
+            confidenceText.innerText = "Confidence: " + data.confidence + "%";
+
+            resultBox.style.display = "block";
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Something went wrong. Try again.");
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -8,9 +8,9 @@ from nltk.corpus import stopwords
 app = Flask(__name__)
 
 
+
 with open("model/sentiment_pipeline.pkl", "rb") as f:
     model = pickle.load(f)
-
 # Download stopwords (safe even if already downloaded)
 nltk.download("stopwords")
 stop_words = set(stopwords.words("english"))

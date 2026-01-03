@@ -7,12 +7,9 @@ from nltk.corpus import stopwords
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load model and vectorizer
-with open("model/sentiment_model.pkl", "rb") as f:
-    model = pickle.load(f)
 
-with open("model/vectorizer.pkl", "rb") as f:
-    vectorizer = pickle.load(f)
+with open("model/sentiment_pipeline.pkl", "rb") as f:
+    model = pickle.load(f)
 
 # Download stopwords (safe even if already downloaded)
 nltk.download("stopwords")
@@ -41,11 +38,12 @@ def predict():
 
     # Clean & vectorize text
     cleaned_text = clean_text(user_text)
-    vectorized_text = vectorizer.transform([cleaned_text])
+    # vectorized_text = vectorizer.transform([cleaned_text])
 
-    # Prediction
-    prediction = model.predict(vectorized_text)[0]
-    probability = model.predict_proba(vectorized_text)[0].max()
+    
+    prediction = model.predict([cleaned_text])[0]
+    probability = model.predict_proba([cleaned_text]).max()
+
 
     if prediction == 1:
         sentiment = "Positive 😊"
